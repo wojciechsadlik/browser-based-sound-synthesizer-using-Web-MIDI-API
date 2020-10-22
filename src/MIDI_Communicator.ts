@@ -3,7 +3,6 @@ export default class MIDI_Communicator {
 
     constructor() {
         this.midiAccess = null;
-
         this.init();
     }
 
@@ -13,14 +12,13 @@ export default class MIDI_Communicator {
             this.onMIDIAccessRejected);
     }
 
-    private onMIDIAccessGained(midi: WebMidi.MIDIAccess) {
-        console.log(midi);
+    private onMIDIAccessGained = (midi: WebMidi.MIDIAccess) => {
         this.midiAccess = midi;
 
         console.log("MIDI access gained");            
     }
 
-    private onMIDIAccessRejected() {
+    private onMIDIAccessRejected = () => {
         alert("MIDI access rejected");
 
         console.log("MIDI access rejected");
