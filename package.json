@@ -4,6 +4,8 @@
   "description": "Przeglądarkowy syntezator dźwięku wykorzystujący Web MIDI API",
   "main": "index.js",
   "scripts": {
+    "server": "webpack serve",
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,6 +19,11 @@
   },
   "homepage": "https://github.com/wojciechsadlik/Brawser-based-sound-synthesizer-using-Web-MIDI-API#readme",
   "devDependencies": {
-    "@types/webmidi": "^2.0.4"
+    "@types/webmidi": "^2.0.4",
+    "ts-loader": "^8.0.6",
+    "typescript": "^4.0.3",
+    "webpack": "^5.1.3",
+    "webpack-cli": "^4.1.0",
+    "webpack-dev-server": "^3.11.0"
   }
 }
