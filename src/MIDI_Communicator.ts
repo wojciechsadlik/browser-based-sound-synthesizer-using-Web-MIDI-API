@@ -3,24 +3,22 @@ export default class MIDI_Communicator {
 
     constructor() {
         this.midiAccess = null;
-        this.init();
     }
 
-    private init() {
-        navigator.requestMIDIAccess().then(
-            this.onMIDIAccessGained,
-            this.onMIDIAccessRejected);
+    public async requestAccess() {
+        try {
+            this.midiAccess = await navigator.requestMIDIAccess();
+            console.log('MIDI access gained');
+        } catch(err) {
+            console.error('MIDI access rejected ' + err);
+        }
     }
 
-    private onMIDIAccessGained = (midi: WebMidi.MIDIAccess) => {
-        this.midiAccess = midi;
-
-        console.log("MIDI access gained");            
-    }
-
-    private onMIDIAccessRejected = () => {
-        alert("MIDI access rejected");
-
-        console.log("MIDI access rejected");
+    public getInputs(): WebMidi.MIDIInputMap | never {
+        if (!this.midiAccess) {
+            throw new Error('No MIDI access');
+        } else {
+            return this.midiAccess.inputs;
+        }
     }
 }
