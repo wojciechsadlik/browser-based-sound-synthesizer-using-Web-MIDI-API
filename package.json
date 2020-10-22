@@ -1,0 +1,22 @@
+{
+  "name": "brawser-based-sound-synthesizer-using-web-midi-api",
+  "version": "1.0.0",
+  "description": "Przeglądarkowy syntezator dźwięku wykorzystujący Web MIDI API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wojciechsadlik/Brawser-based-sound-synthesizer-using-Web-MIDI-API.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wojciechsadlik/Brawser-based-sound-synthesizer-using-Web-MIDI-API/issues"
+  },
+  "homepage": "https://github.com/wojciechsadlik/Brawser-based-sound-synthesizer-using-Web-MIDI-API#readme",
+  "devDependencies": {
+    "@types/webmidi": "^2.0.4"
+  }
+}
