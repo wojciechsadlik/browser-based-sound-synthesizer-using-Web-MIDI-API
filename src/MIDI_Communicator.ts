@@ -1,10 +1,12 @@
 export default class MIDI_Communicator {
     private midiAccess: WebMidi.MIDIAccess | null;
     private midiInputSelectElem: HTMLSelectElement | null;
+    private activeInput: WebMidi.MIDIInput | null;
 
     constructor() {
         this.midiAccess = null;
         this.midiInputSelectElem = null;
+        this.activeInput = null;
     }
 
     public async init(midiInputSelectElem: HTMLSelectElement) {
@@ -30,13 +32,46 @@ export default class MIDI_Communicator {
         }
     }
 
+    public setSelectedInput = (inputId: string): void | never => {
+        console.log(inputId);
+        let input = this.getInputs().get(inputId);
+        
+        if (typeof input === 'undefined')
+            this.setActiveInput(null);
+        
+        if (!input) {
+            throw new Error(inputId + ' inputId doesn\'t match');
+        }
+    }
+
+    private setActiveInput = (input: WebMidi.MIDIInput | null): void => {
+        if (this.activeInput)
+            this.activeInput.onmidimessage = () => {};
+
+        if (input)
+            this.activeInput = input;
+        else
+            this.activeInput = null;
+
+        if (this.activeInput)
+            this.activeInput.onmidimessage = this.onMIDIMessage;
+    }
+
+    private onMIDIMessage = (e: WebMidi.MIDIMessageEvent): void => {
+        console.log(e.data);
+    }
+
     private onstatechange = (e: WebMidi.MIDIConnectionEvent): void => {
+        if (this.activeInput && e.port.id === this.activeInput.id) {
+            this.setActiveInput(null);
+        }
+
         this.updateInputSelect();
     }
 
     private updateInputSelect = (): void => {
-        for (let i = this.midiInputSelectElem!.size; i >= 0; --i) {
-            this.midiInputSelectElem!.remove(i);
+        for (let i = this.midiInputSelectElem!.options.length - 1; i >= 1; --i) {
+            this.midiInputSelectElem!.options.remove(i);
         }
 
         for (let input of Array.from(this.getInputs().values())) {
