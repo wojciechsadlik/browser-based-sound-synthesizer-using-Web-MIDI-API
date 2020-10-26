@@ -1,12 +1,16 @@
+import SoundGenerator from "./SoundGenerator";
+
 export default class MIDI_Communicator {
     private midiAccess: WebMidi.MIDIAccess | null;
     private midiInputSelectElem: HTMLSelectElement | null;
     private activeInput: WebMidi.MIDIInput | null;
+    private soundGenerator: SoundGenerator | null;
 
     constructor() {
         this.midiAccess = null;
         this.midiInputSelectElem = null;
         this.activeInput = null;
+        this.soundGenerator = null;
     }
 
     public async init(midiInputSelectElem: HTMLSelectElement) {
@@ -33,15 +37,20 @@ export default class MIDI_Communicator {
     }
 
     public setSelectedInput = (inputId: string): void | never => {
-        console.log(inputId);
         let input = this.getInputs().get(inputId);
         
         if (typeof input === 'undefined')
             this.setActiveInput(null);
+        else
+            this.setActiveInput(input);
         
         if (!input) {
             throw new Error(inputId + ' inputId doesn\'t match');
         }
+    }
+
+    public connectSoundGenerator = (soundGenerator: SoundGenerator): void => {
+        this.soundGenerator = soundGenerator;
     }
 
     private setActiveInput = (input: WebMidi.MIDIInput | null): void => {
@@ -58,7 +67,15 @@ export default class MIDI_Communicator {
     }
 
     private onMIDIMessage = (e: WebMidi.MIDIMessageEvent): void => {
-        console.log(e.data);
+        switch (e.data[0] & 0xf0) {
+            case 0x90:
+                if (e.data[2] !== 0) {
+                    this.soundGenerator?.noteOn(e.data[1]);
+                }
+                break;
+            case 0x80:
+                this.soundGenerator?.noteOff(e.data[1]);
+        }
     }
 
     private onstatechange = (e: WebMidi.MIDIConnectionEvent): void => {
