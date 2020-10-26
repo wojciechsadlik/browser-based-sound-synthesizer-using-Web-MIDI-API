@@ -4,15 +4,16 @@ export default class SoundGenerator {
     private masterGainNode: GainNode | null;
     private selectedWaveType: OscillatorType | null;
 
-    constructor() {
-        this.context = new window.AudioContext();
+    constructor(context: AudioContext) {
+        this.context = context;
         this.oscillators = new Map<number, OscillatorNode>();
         this.masterGainNode = this.context.createGain();
-        this.selectedWaveType = null;
+        this.selectedWaveType = 'square';
     }
 
     
     public noteOn = (noteNumber: number): void => {
+        console.log(this.noteNumberToFrequency(noteNumber));
         let osc = this.generateSound(this.noteNumberToFrequency(noteNumber));
         
         this.oscillators.set(noteNumber, osc);
@@ -28,9 +29,14 @@ export default class SoundGenerator {
         this.oscillators.delete(noteNumber);
     }
 
+    public setVolume = (volume: number): void => {
+        if (this.masterGainNode)
+            this.masterGainNode.gain.value = volume;
+    }
+
     private generateSound = (frequency: number): OscillatorNode => {
         let osc = this.context.createOscillator();
-        osc.connect(this.masterGainNode as AudioNode);
+        osc.connect(this.masterGainNode as GainNode);
 
         if (this.selectedWaveType) {
             osc.type = this.selectedWaveType;
