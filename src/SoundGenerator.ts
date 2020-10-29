@@ -3,62 +3,75 @@ import WaveformData from './WaveformData';
 
 export default class SoundGenerator {
     private context: AudioContext;
-    private oscillators: Map<number, Voice[]>;
+    private voices: Map<number, Voice[]>;
     private waveforms: WaveformData[];
-    // private masterGainNode: GainNode | null;
-    // private selectedWaveType: OscillatorType | null;
 
     constructor(context: AudioContext) {
         this.context = context;
-        this.oscillators = new Map<number, Voice[]>();
+        this.voices = new Map<number, Voice[]>();
         this.waveforms = [];
-
-        // this.masterGainNode = this.context.createGain();
-        // this.masterGainNode.connect(this.context.destination);
-
-        // this.selectedWaveType = null;
     }
-
     
     public noteOn = (noteNumber: number): void => {
-        let osc = this.generateSound(this.noteNumberToFrequency(noteNumber));
+        let voices = this.generateVoices(this.noteNumberToFrequency(noteNumber));
+        
+        for (let voice of voices) {
+            voice.start();
+        }
 
-        this.oscillators.set(noteNumber, osc);
+        this.voices.set(noteNumber, voices);
     }
 
     public noteOff = (noteNumber: number): void => {
-        let activeOscillator = this.oscillators.get(noteNumber);
+        let voices = this.voices.get(noteNumber);
         
-        if (typeof activeOscillator !== 'undefined') {
-            activeOscillator.stop();
+        if (voices) {
+            for (let voice of voices) {
+                voice.stop();
+            }
         }
-
-        this.oscillators.delete(noteNumber);
+        
+        this.voices.delete(noteNumber);
     }
 
-    public setVolume = (waveformId: number, value: number): void => {
+    public setVolume = (waveformId: number, value: number): void | never => {
         if (this.waveforms[waveformId])
             this.waveforms[waveformId].volume = value;
+        else
+            throw new Error('waveform doesn\'t exist');
     }
 
-    public setWaveType = (waveType: OscillatorType | null): void => {
-        this.selectedWaveType = waveType;
+    public setWaveType = (waveformId: number, waveType: OscillatorType | null): void | never => {
+        if (this.waveforms[waveformId])
+            this.waveforms[waveformId].type = waveType;
+        else
+            throw new Error('waveform doesn\'t exist');
     }
 
-    private generateSound = (frequency: number): OscillatorNode => {
-        let osc = this.context.createOscillator();
-        osc.connect(this.masterGainNode as GainNode);
-        let vc = new Voice(this.context, 'square');
+    public addWaveform = (waveform: WaveformData): void => {
+        this.waveforms.push(waveform);
+    }
 
-        if (this.selectedWaveType) {
-            osc.type = this.selectedWaveType;
+    public removeWaveform = (id: number): void | never => {
+        if (this.waveforms[id])
+            this.waveforms.splice(id, 1);
+        else
+            throw new Error('waveform doesn\'t exist');
+    }
+
+    private generateVoices = (frequency: number): Voice[] => {
+        let voices: Voice[] = [];
+
+        for (let waveformData of this.waveforms) {
+            if (waveformData.type) {
+                let voice = new Voice(this.context, waveformData.type);
+                voice.setVolume(waveformData.volume);
+                voice.frequency.value = frequency;
+                voices.push(voice);
+            }
         }
 
-        osc.frequency.value = frequency;
-
-        osc.start();
-
-        return osc;
+        return voices;
     }
 
     private noteNumberToFrequency = (noteNumber: number): number => {
