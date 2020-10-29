@@ -1,17 +1,22 @@
+import Voice from './Voice';
+import WaveformData from './WaveformData';
+
 export default class SoundGenerator {
     private context: AudioContext;
-    private oscillators: Map<number, OscillatorNode>;
-    private masterGainNode: GainNode | null;
-    private selectedWaveType: OscillatorType | null;
+    private oscillators: Map<number, Voice[]>;
+    private waveforms: WaveformData[];
+    // private masterGainNode: GainNode | null;
+    // private selectedWaveType: OscillatorType | null;
 
     constructor(context: AudioContext) {
         this.context = context;
-        this.oscillators = new Map<number, OscillatorNode>();
+        this.oscillators = new Map<number, Voice[]>();
+        this.waveforms = [];
 
-        this.masterGainNode = this.context.createGain();
-        this.masterGainNode.connect(this.context.destination);
+        // this.masterGainNode = this.context.createGain();
+        // this.masterGainNode.connect(this.context.destination);
 
-        this.selectedWaveType = null;
+        // this.selectedWaveType = null;
     }
 
     
@@ -31,9 +36,9 @@ export default class SoundGenerator {
         this.oscillators.delete(noteNumber);
     }
 
-    public setVolume = (volume: number): void => {
-        if (this.masterGainNode)
-            this.masterGainNode.gain.value = volume;
+    public setVolume = (waveformId: number, value: number): void => {
+        if (this.waveforms[waveformId])
+            this.waveforms[waveformId].volume = value;
     }
 
     public setWaveType = (waveType: OscillatorType | null): void => {
@@ -43,6 +48,7 @@ export default class SoundGenerator {
     private generateSound = (frequency: number): OscillatorNode => {
         let osc = this.context.createOscillator();
         osc.connect(this.masterGainNode as GainNode);
+        let vc = new Voice(this.context, 'square');
 
         if (this.selectedWaveType) {
             osc.type = this.selectedWaveType;
@@ -59,3 +65,4 @@ export default class SoundGenerator {
         return 440 * Math.pow(2, (noteNumber - 69) / 12);
     }
 }
+
