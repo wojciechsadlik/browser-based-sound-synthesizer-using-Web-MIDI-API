@@ -1,4 +1,4 @@
-export default class WaveformData  {
-    volume: number = 0;
-    type: OscillatorType | null = null;
+export default interface WaveformData  {
+    volume: number;
+    type: OscillatorType;
 }

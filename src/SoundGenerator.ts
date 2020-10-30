@@ -5,11 +5,21 @@ export default class SoundGenerator {
     private context: AudioContext;
     private voices: Map<number, Voice[]>;
     private waveforms: Map<number, WaveformData>;
+    private masterGain: GainNode;
+    private compressor: DynamicsCompressorNode;
 
     constructor(context: AudioContext) {
         this.context = context;
+
         this.voices = new Map<number, Voice[]>();
+
         this.waveforms = new Map<number, WaveformData>();
+
+        this.compressor = this.context.createDynamicsCompressor();
+        this.compressor.connect(context.destination)
+        
+        this.masterGain = this.context.createGain();
+        this.masterGain.connect(this.compressor);
     }
     
     public noteOn = (noteNumber: number): void => {
@@ -34,6 +44,10 @@ export default class SoundGenerator {
         this.voices.delete(noteNumber);
     }
 
+    public setMasterVolume = (value: number) : void => {
+        this.masterGain.gain.value = value;
+    }
+
     public setVolume = (waveformId: number, value: number): void | never => {
         if (typeof this.waveforms.get(waveformId) !== 'undefined')
             this.waveforms.get(waveformId)!.volume = value;
@@ -41,7 +55,7 @@ export default class SoundGenerator {
             throw new Error('waveform doesn\'t exist');
     }
 
-    public setWaveType = (waveformId: number, waveType: OscillatorType | null): void | never => {
+    public setWaveType = (waveformId: number, waveType: OscillatorType): void | never => {
         if (typeof this.waveforms.get(waveformId) !== 'undefined')
             this.waveforms.get(waveformId)!.type = waveType;
         else
@@ -64,7 +78,7 @@ export default class SoundGenerator {
         
         this.waveforms.forEach((waveformData) => {
             if (waveformData.type) {
-                let voice = new Voice(this.context, waveformData.type);
+                let voice = new Voice(this.context, waveformData.type, this.masterGain);
                 voice.setVolume(waveformData.volume);
                 voice.frequency.value = frequency;
                 voices.push(voice);
