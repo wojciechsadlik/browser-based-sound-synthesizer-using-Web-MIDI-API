@@ -3,13 +3,11 @@ import SoundGenerator from './SoundGenerator';
 import WaveformData from './WaveformData';
 
 const midiInputSelectElem = document.getElementById('MIDI_Input_sel') as HTMLSelectElement;
-//const volumeElem = document.getElementById('volume') as HTMLInputElement;
 const addWaveformBtnElem = document.getElementById('add_waveform_btn') as HTMLButtonElement;
 const waveformsDivElem = document.getElementById('waveforms') as HTMLDivElement;
 
 const audioContext = new window.AudioContext();
 const soundGenerator = new SoundGenerator(audioContext);
-//soundGenerator.setVolume(Number(volumeElem.value));
 
 window.addEventListener('click', resumeAudioContext);
 
@@ -18,8 +16,6 @@ midiCommunicator.init(midiInputSelectElem);
 midiCommunicator.connectSoundGenerator(soundGenerator);
 
 midiInputSelectElem.addEventListener('change', inputSelectChange);
-
-//volumeElem.addEventListener('change', volumeChange);
 
 addWaveformBtnElem.addEventListener('click', addWaveform);
 
@@ -44,12 +40,14 @@ function resumeAudioContext() {
 }
 
 function addWaveform() {
-    let waveformSelector = createWaveformSelector(waveformsDivElem.childElementCount);
+    let lastChild = waveformsDivElem.lastElementChild;
+    let id = ((lastChild) ? Number(lastChild.id) + 1 : 0);
+    let waveformSelector = createWaveformSelector(id);
     waveformsDivElem.appendChild(waveformSelector);
     let waveform = new WaveformData;
     waveform.type = 'square';
     waveform.volume = 0.5;
-    soundGenerator.addWaveform(waveform);
+    soundGenerator.addWaveform(Number(waveformSelector.id), waveform);
 }
 
 function removeWaveform(this: HTMLButtonElement) {
