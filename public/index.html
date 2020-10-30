@@ -15,7 +15,14 @@
     <input type="range" id="masterVolume" min="0.0" max="1.0" step="0.01" value="0.5">
     
     <button id="add_waveform_btn">add waveform</button>
-    <div id="waveforms"></div>
+    <table id="waveforms" border="solid, 1px">
+        <tr>
+            <th>Wave type</th>
+            <th>Gain</th>
+            <th>Delay</th>
+            <th></th>
+        </tr>
+    </table>
 
     <script src="index.js" defer></script>
 </body>

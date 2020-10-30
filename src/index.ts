@@ -4,7 +4,7 @@ import WaveformData from './WaveformData';
 
 const midiInputSelectElem = document.getElementById('MIDI_Input_sel') as HTMLSelectElement;
 const addWaveformBtnElem = document.getElementById('add_waveform_btn') as HTMLButtonElement;
-const waveformsDivElem = document.getElementById('waveforms') as HTMLDivElement;
+const waveformsTableElem = document.getElementById('waveforms') as HTMLTableElement;
 const masterVolumeElem = document.getElementById('masterVolume') as HTMLInputElement;
 
 const audioContext = new window.AudioContext();
@@ -29,12 +29,15 @@ function inputSelectChange() {
 function volumeChange(this: HTMLInputElement) {
     if (this.id === 'masterVolume')
         soundGenerator.setMasterVolume(Number(this.value));
-    else
-        soundGenerator.setVolume(Number(this.parentElement!.id), Number(this.value));
+    else {
+        let rowId = this.parentElement!.parentElement!.id
+        soundGenerator.setVolume(Number(rowId), Number(this.value));
+    }
 }
 
 function waveformChange(this: HTMLSelectElement) {
-    soundGenerator.setWaveType(Number(this.parentElement!.id), this.value as OscillatorType);
+    let rowId = this.parentElement!.parentElement!.id
+    soundGenerator.setWaveType(Number(rowId), this.value as OscillatorType);
 }
 
 function resumeAudioContext() {
@@ -46,29 +49,32 @@ function resumeAudioContext() {
 }
 
 function addWaveform() {
-    let lastChild = waveformsDivElem.lastElementChild;
+    let lastChild = waveformsTableElem.lastElementChild;
     let id = ((lastChild) ? Number(lastChild.id) + 1 : 0);
     let waveformSelector = createWaveformSelector(id);
-    waveformsDivElem.appendChild(waveformSelector);
+    waveformsTableElem.appendChild(waveformSelector);
     let waveform: WaveformData = {type: 'square', volume: 0.5};
     soundGenerator.addWaveform(Number(waveformSelector.id), waveform);
 }
 
 function removeWaveform(this: HTMLButtonElement) {
-    if (this.parentElement) {
-        soundGenerator.removeWaveform(Number(this.parentElement.id));
-        waveformsDivElem.removeChild(this.parentNode as Node);
-    }
+    let row = this.parentElement!.parentElement!
+
+    soundGenerator.removeWaveform(Number(row.id));
+    waveformsTableElem.removeChild(row as Node);
 }
 
-function createWaveformSelector(id: number): HTMLDivElement {
-    let selectorDiv = document.createElement('div');
-    selectorDiv.id = id.toString();
+function createWaveformSelector(id: number): HTMLTableRowElement {
+    let tableRow = document.createElement('tr');
+    tableRow.id = id.toString();
 
+    let wavetype = document.createElement('td');
     let selector = document.createElement('select');
     addWaveforms(selector);
     selector.addEventListener('change', waveformChange);
+    wavetype.append(selector);
 
+    let volume = document.createElement('td');
     let volumeSlider = document.createElement('input');
     volumeSlider.type = 'range';
     volumeSlider.min = '0';
@@ -76,16 +82,30 @@ function createWaveformSelector(id: number): HTMLDivElement {
     volumeSlider.step = '0.01';
     volumeSlider.value = '0.5';
     volumeSlider.addEventListener('change', volumeChange);
+    volume.append(volumeSlider);
 
+    let delay = document.createElement('td');
+    let delaySlider = document.createElement('input');
+    delaySlider.type = 'range';
+    delaySlider.min = '0';
+    delaySlider.max = '1';
+    delaySlider.step = '0.01';
+    delaySlider.value = '0';
+    // delaySlider.addEventListener('change', delayChange);
+    delay.append(delaySlider);
+
+    let remove = document.createElement('td');
     let removeBtn = document.createElement('button');
     removeBtn.appendChild(document.createTextNode('remove'));
     removeBtn.addEventListener('click', removeWaveform);
-    
-    selectorDiv.appendChild(selector);
-    selectorDiv.appendChild(volumeSlider);
-    selectorDiv.appendChild(removeBtn);
+    remove.append(removeBtn);
 
-    return selectorDiv;
+    tableRow.appendChild(wavetype);
+    tableRow.appendChild(volume);
+    tableRow.appendChild(delay);
+    tableRow.appendChild(remove);
+
+    return tableRow;
 }
 
 function addWaveforms(selector: HTMLSelectElement) {
