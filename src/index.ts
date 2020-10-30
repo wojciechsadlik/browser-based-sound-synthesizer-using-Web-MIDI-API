@@ -35,6 +35,11 @@ function volumeChange(this: HTMLInputElement) {
     }
 }
 
+function delayChange(this: HTMLInputElement) {
+    let rowId = this.parentElement!.parentElement!.id
+    soundGenerator.setDelay(Number(rowId), Number(this.value));
+}
+
 function waveformChange(this: HTMLSelectElement) {
     let rowId = this.parentElement!.parentElement!.id
     soundGenerator.setWaveType(Number(rowId), this.value as OscillatorType);
@@ -53,7 +58,7 @@ function addWaveform() {
     let id = ((lastChild) ? Number(lastChild.id) + 1 : 0);
     let waveformSelector = createWaveformSelector(id);
     waveformsTableElem.appendChild(waveformSelector);
-    let waveform: WaveformData = {type: 'square', volume: 0.5};
+    let waveform: WaveformData = {type: 'square', volume: 0.5, delay: 0.0};
     soundGenerator.addWaveform(Number(waveformSelector.id), waveform);
 }
 
@@ -91,7 +96,7 @@ function createWaveformSelector(id: number): HTMLTableRowElement {
     delaySlider.max = '1';
     delaySlider.step = '0.01';
     delaySlider.value = '0';
-    // delaySlider.addEventListener('change', delayChange);
+    delaySlider.addEventListener('change', delayChange);
     delay.append(delaySlider);
 
     let remove = document.createElement('td');

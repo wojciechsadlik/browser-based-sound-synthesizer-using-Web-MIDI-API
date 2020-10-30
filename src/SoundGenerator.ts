@@ -55,6 +55,13 @@ export default class SoundGenerator {
             throw new Error('waveform doesn\'t exist');
     }
 
+    public setDelay = (waveformId: number, value: number): void | never => {
+        if (typeof this.waveforms.get(waveformId) !== 'undefined')
+            this.waveforms.get(waveformId)!.delay = value;
+        else
+            throw new Error('waveform doesn\'t exist');
+    }
+
     public setWaveType = (waveformId: number, waveType: OscillatorType): void | never => {
         if (typeof this.waveforms.get(waveformId) !== 'undefined')
             this.waveforms.get(waveformId)!.type = waveType;
@@ -80,6 +87,7 @@ export default class SoundGenerator {
             if (waveformData.type) {
                 let voice = new Voice(this.context, waveformData.type, this.masterGain);
                 voice.setVolume(waveformData.volume);
+                voice.setDelay(waveformData.delay, frequency);
                 voice.frequency.value = frequency;
                 voices.push(voice);
             }

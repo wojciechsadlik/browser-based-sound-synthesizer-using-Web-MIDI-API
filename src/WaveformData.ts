@@ -1,4 +1,7 @@
 export default interface WaveformData  {
-    volume: number;
     type: OscillatorType;
+
+    volume: number;
+
+    delay: number;
 }
