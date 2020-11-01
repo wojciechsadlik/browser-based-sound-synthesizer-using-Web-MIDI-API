@@ -6,6 +6,7 @@ const midiInputSelectElem = document.getElementById('MIDI_Input_sel') as HTMLSel
 const addWaveformBtnElem = document.getElementById('add_waveform_btn') as HTMLButtonElement;
 const waveformsTableElem = document.getElementById('waveforms') as HTMLTableElement;
 const masterVolumeElem = document.getElementById('masterVolume') as HTMLInputElement;
+const compressorCheckElem = document.getElementById('compressorToggle') as HTMLInputElement;
 
 const audioContext = new window.AudioContext();
 const soundGenerator = new SoundGenerator(audioContext);
@@ -21,6 +22,8 @@ midiInputSelectElem.addEventListener('change', inputSelectChange);
 addWaveformBtnElem.addEventListener('click', addWaveform);
 
 masterVolumeElem.addEventListener('change', volumeChange);
+
+compressorCheckElem.addEventListener('change', compressorCheckChange);
 
 function inputSelectChange() {
     midiCommunicator.setSelectedInput(midiInputSelectElem.value);
@@ -43,6 +46,10 @@ function delayChange(this: HTMLInputElement) {
 function waveformChange(this: HTMLSelectElement) {
     let rowId = this.parentElement!.parentElement!.id
     soundGenerator.setWaveType(Number(rowId), this.value as OscillatorType);
+}
+
+function compressorCheckChange(this: HTMLInputElement) {
+    soundGenerator.setCompressorOn(this.checked);
 }
 
 function resumeAudioContext() {

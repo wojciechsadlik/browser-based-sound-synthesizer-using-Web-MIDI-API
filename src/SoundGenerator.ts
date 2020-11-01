@@ -7,6 +7,8 @@ export default class SoundGenerator {
     private waveforms: Map<number, WaveformData>;
     private masterGain: GainNode;
     private compressor: DynamicsCompressorNode;
+    private outputNode: AudioNode;
+    private destination: AudioNode;
 
     constructor(context: AudioContext) {
         this.context = context;
@@ -15,11 +17,34 @@ export default class SoundGenerator {
 
         this.waveforms = new Map<number, WaveformData>();
 
+        this.destination = context.destination;
+
         this.compressor = this.context.createDynamicsCompressor();
-        this.compressor.connect(context.destination)
+        this.compressor.connect(this.destination);
+        this.outputNode = this.compressor;
         
         this.masterGain = this.context.createGain();
         this.masterGain.connect(this.compressor);
+    }
+
+    public setDestination = (destination: AudioNode) => {
+        this.destination = destination;
+
+        this.outputNode.disconnect();
+
+        this.outputNode.connect(destination);
+    }
+
+    public setCompressorOn(turnOn: boolean) {
+        this.compressor.disconnect();
+        this.masterGain.disconnect();
+
+        if (turnOn) {
+            this.compressor.connect(this.destination);
+            this.masterGain.connect(this.compressor);
+        } else {
+            this.masterGain.connect(this.destination);
+        }
     }
     
     public noteOn = (noteNumber: number): void => {
