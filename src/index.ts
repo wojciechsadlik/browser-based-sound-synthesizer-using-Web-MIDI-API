@@ -1,5 +1,6 @@
 import MIDI_Communicator from './MIDI_Communicator';
 import SoundGenerator from './SoundGenerator';
+import Oscilloscope from './Oscilloscope';
 import WaveformData from './WaveformData';
 
 const midiInputSelectElem = document.getElementById('MIDI_Input_sel') as HTMLSelectElement;
@@ -10,6 +11,7 @@ const compressorCheckElem = document.getElementById('compressorToggle') as HTMLI
 
 const audioContext = new window.AudioContext();
 const soundGenerator = new SoundGenerator(audioContext);
+const oscilloscope = new Oscilloscope(audioContext);
 
 window.addEventListener('click', resumeAudioContext);
 
