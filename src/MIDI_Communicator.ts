@@ -53,10 +53,7 @@ export default class MIDI_Communicator {
         if (this.activeInput)
             this.activeInput.onmidimessage = () => {};
 
-        if (input)
-            this.activeInput = input;
-        else
-            this.activeInput = null;
+        this.activeInput = input;
 
         if (this.activeInput)
             this.activeInput.onmidimessage = this.onMIDIMessage;
@@ -75,11 +72,18 @@ export default class MIDI_Communicator {
     }
 
     private onstatechange = (e: WebMidi.MIDIConnectionEvent): void => {
-        if (this.activeInput && e.port.id === this.activeInput.id) {
-            this.setActiveInput(null);
+        let midiPort = e.port;
+        if (midiPort.type === 'input') {
+            if (midiPort.connection === 'open') {
+                this.updateInputSelect();
+            } else if (midiPort.connection == 'closed') {
+                if (this.activeInput && e.port.id === this.activeInput.id) {
+                    this.setActiveInput(null);
+                }
+            }
+            
+            this.updateInputSelect();
         }
-
-        this.updateInputSelect();
     }
 
     private updateInputSelect = (): void => {
@@ -96,9 +100,14 @@ export default class MIDI_Communicator {
                 option.text = input.id;
             
             option.value = input.id;
+
+            if (this.activeInput && this.activeInput.id === input.id) {
+                option.defaultSelected = true;
+            }
             
             this.midiInputSelectElem!.add(option);
         }
+        console.log('updateInputSelect');
     }
     
 }
