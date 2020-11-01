@@ -48,7 +48,7 @@ export default class SoundGenerator {
     }
     
     public noteOn = (noteNumber: number): void => {
-        let voices = this.generateVoices(this.noteNumberToFrequency(noteNumber));
+        let voices = this.generateVoices(SoundGenerator.noteNumberToFrequency(noteNumber));
         
         for (let voice of voices) {
             voice.start();
@@ -105,6 +105,10 @@ export default class SoundGenerator {
             throw new Error('waveform doesn\'t exist');
     }
 
+    static readonly noteNumberToFrequency = (noteNumber: number): number => {
+        return 440 * Math.pow(2, (noteNumber - 69) / 12);
+    }
+
     private generateVoices = (frequency: number): Voice[] => {
         let voices: Voice[] = [];
         
@@ -119,10 +123,6 @@ export default class SoundGenerator {
         });
 
         return voices;
-    }
-
-    private noteNumberToFrequency = (noteNumber: number): number => {
-        return 440 * Math.pow(2, (noteNumber - 69) / 12);
     }
 }
 
