@@ -43,10 +43,6 @@ export default class MIDI_Communicator {
             this.setActiveInput(null);
         else
             this.setActiveInput(input);
-        
-        if (!input) {
-            throw new Error(inputId + ' inputId doesn\'t match');
-        }
     }
 
     private setActiveInput = (input: WebMidi.MIDIInput | null): void => {
@@ -107,7 +103,6 @@ export default class MIDI_Communicator {
             
             this.midiInputSelectElem!.add(option);
         }
-        console.log('updateInputSelect');
     }
     
 }
