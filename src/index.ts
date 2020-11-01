@@ -8,16 +8,21 @@ const addWaveformBtnElem = document.getElementById('add_waveform_btn') as HTMLBu
 const waveformsTableElem = document.getElementById('waveforms') as HTMLTableElement;
 const masterVolumeElem = document.getElementById('masterVolume') as HTMLInputElement;
 const compressorCheckElem = document.getElementById('compressorToggle') as HTMLInputElement;
+const oscillatorCanvasElem = document.getElementById('oscillatorCanvas') as HTMLCanvasElement;
 
 const audioContext = new window.AudioContext();
 const soundGenerator = new SoundGenerator(audioContext);
-const oscilloscope = new Oscilloscope(audioContext);
+const oscilloscope = new Oscilloscope(audioContext, oscillatorCanvasElem);
 
-window.addEventListener('click', resumeAudioContext);
+soundGenerator.setDestination(oscilloscope.analyser);
+oscilloscope.setDestination();
+oscilloscope.draw();
 
 const midiCommunicator = new MIDI_Communicator();
 midiCommunicator.init(midiInputSelectElem);
 midiCommunicator.connectSoundGenerator(soundGenerator);
+
+window.addEventListener('click', resumeAudioContext);
 
 midiInputSelectElem.addEventListener('change', inputSelectChange);
 
