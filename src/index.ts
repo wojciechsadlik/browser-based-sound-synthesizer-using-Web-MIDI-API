@@ -20,7 +20,14 @@ oscilloscope.draw();
 
 const midiCommunicator = new MIDI_Communicator();
 midiCommunicator.init(midiInputSelectElem);
-midiCommunicator.connectSoundGenerator(soundGenerator);
+
+midiCommunicator.eventTarget.addEventListener('noteOn', ((e: CustomEvent) => {
+    soundGenerator.noteOn(e.detail.noteNumber);
+}) as EventListener);
+
+midiCommunicator.eventTarget.addEventListener('noteOff', ((e: CustomEvent) => {
+    soundGenerator.noteOff(e.detail.noteNumber);
+}) as EventListener);
 
 window.addEventListener('click', resumeAudioContext);
 

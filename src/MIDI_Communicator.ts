@@ -4,13 +4,13 @@ export default class MIDI_Communicator {
     private midiAccess: WebMidi.MIDIAccess | null;
     private midiInputSelectElem: HTMLSelectElement | null;
     private activeInput: WebMidi.MIDIInput | null;
-    private soundGenerator: SoundGenerator | null;
+    readonly eventTarget: EventTarget; 
 
     constructor() {
         this.midiAccess = null;
         this.midiInputSelectElem = null;
         this.activeInput = null;
-        this.soundGenerator = null;
+        this.eventTarget = new EventTarget();
     }
 
     public async init(midiInputSelectElem: HTMLSelectElement) {
@@ -49,10 +49,6 @@ export default class MIDI_Communicator {
         }
     }
 
-    public connectSoundGenerator = (soundGenerator: SoundGenerator): void => {
-        this.soundGenerator = soundGenerator;
-    }
-
     private setActiveInput = (input: WebMidi.MIDIInput | null): void => {
         if (this.activeInput)
             this.activeInput.onmidimessage = () => {};
@@ -70,11 +66,11 @@ export default class MIDI_Communicator {
         switch (e.data[0] & 0xf0) {
             case 0x90:
                 if (e.data[2] !== 0) {
-                    this.soundGenerator?.noteOn(e.data[1]);
+                    this.eventTarget.dispatchEvent(new CustomEvent('noteOn', { detail: {noteNumber: e.data[1]} } as EventInit));
                 }
                 break;
             case 0x80:
-                this.soundGenerator?.noteOff(e.data[1]);
+                this.eventTarget.dispatchEvent(new CustomEvent('noteOff', { detail: {noteNumber: e.data[1]} } as EventInit));
         }
     }
 
