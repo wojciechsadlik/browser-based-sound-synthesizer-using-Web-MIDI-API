@@ -9,7 +9,7 @@ export default class Oscilloscope {
 
     constructor(audioCtx: AudioContext, canvas: HTMLCanvasElement) {
         this.analyser = audioCtx.createAnalyser();
-        this.analyser.fftSize = 2048;
+        this.analyser.fftSize = 1024;
         let bufferLength = this.analyser.frequencyBinCount;
         this.dataArray = new Uint8Array(bufferLength);
 
@@ -44,22 +44,29 @@ export default class Oscilloscope {
     }
 
     public drawStart = () => {
-        let now = Date.now();
-        let interval = this.fpsInterval * 1000.0 / this.frequency;
-        let expected = now + interval;
+        //let now = Date.now();
+        //let interval = this.fpsInterval * 1000.0 / this.frequency;
+        //let interval = 1000 / this.frequency;
+        //let expected = now + interval;
 
-        setTimeout(this.drawLoop, interval, interval, expected);
+        //setTimeout(this.drawLoop, interval, interval, expected);
+
+        //this.drawPlot();
+        //requestAnimationFrame(this.drawStart);
+        setInterval(this.drawPlot, this.fpsInterval);
     }
 
     private drawLoop = (interval: number, expected: number) => {
         let now = Date.now();
         let error = now - expected;
+        console.log(`${interval}, ${error}`);
 
         expected += interval;
 
         setTimeout(this.drawLoop, interval - error, interval, expected);
 
-        this.drawPlot();
+        if (error < 1.0)
+            this.drawPlot();
     }
 
     private drawPlot = () => {
@@ -76,8 +83,13 @@ export default class Oscilloscope {
         const bufferLength = this.dataArray.length;
         const sliceWidth = this.canvas.width / bufferLength;
 
-        let x = 0;
+        let sampleRate = this.analyser.context.sampleRate;
+        let a = sampleRate/this.frequency;
+        let sampleTime = sampleRate * this.analyser.context.currentTime;
+        let offset = sampleTime % a;
+
         for (let i = 0; i < bufferLength; i++) {
+            let x = (i + offset) * sliceWidth;
             let v = this.dataArray[i] / 128.0;
             let y = v * this.canvas.height / 2;
 
@@ -87,10 +99,10 @@ export default class Oscilloscope {
                 this.canvasCtx.lineTo(x, y);
             }
 
-            x += sliceWidth;
+            //x += sliceWidth;
         }
 
-        this.canvasCtx.lineTo(this.canvas.width, this.canvas.height / 2);
+        //this.canvasCtx.lineTo(this.canvas.width, this.canvas.height / 2);
         this.canvasCtx.stroke();
     }
 }
