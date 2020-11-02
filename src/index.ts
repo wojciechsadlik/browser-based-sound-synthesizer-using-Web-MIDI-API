@@ -1,4 +1,5 @@
 import MIDI_Communicator from './MIDI_Communicator';
+import KeyboardMIDIInput from './KeyboardMIDIInput';
 import SoundGenerator from './SoundGenerator';
 import Oscilloscope from './Oscilloscope';
 import WaveformData from './WaveformData';
@@ -26,6 +27,14 @@ midiCommunicator.eventTarget.addEventListener('noteOn', ((e: CustomEvent) => {
 }) as EventListener);
 
 midiCommunicator.eventTarget.addEventListener('noteOff', ((e: CustomEvent) => {
+    soundGenerator.noteOff(e.detail.noteNumber);
+}) as EventListener);
+
+const keyboardMidiInput = new KeyboardMIDIInput();
+keyboardMidiInput.addEventListener('noteOn', ((e: CustomEvent) => {
+    soundGenerator.noteOn(e.detail.noteNumber);
+}) as EventListener);
+keyboardMidiInput.addEventListener('noteOff', ((e: CustomEvent) => {
     soundGenerator.noteOff(e.detail.noteNumber);
 }) as EventListener);
 
