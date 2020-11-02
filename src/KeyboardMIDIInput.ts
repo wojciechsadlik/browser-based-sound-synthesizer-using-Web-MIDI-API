@@ -10,6 +10,17 @@ export default class KeyboardMIDIInput extends EventTarget {
         'i': 69
     }
 
+    private pressed: {[id:string]: boolean} = {
+        'q': false,
+        'w': false,
+        'e': false,
+        'r': false,
+        't': false,
+        'y': false,
+        'u': false,
+        'i': false
+    }
+
     constructor() {
         super();
 
@@ -18,10 +29,18 @@ export default class KeyboardMIDIInput extends EventTarget {
     }
 
     private keyDown = (e: KeyboardEvent) => {
-        this.dispatchEvent(new CustomEvent('noteOn', {detail: {noteNumber: this.dict[e.key]}} ))
+        if (typeof this.pressed[e.key] !== 'undefined') {
+            if (!this.pressed[e.key]) {
+                this.dispatchEvent(new CustomEvent('noteOn', {detail: {noteNumber: this.dict[e.key]}} ))
+                this.pressed[e.key] = true;
+            }
+        }
     }
 
     private keyUp = (e: KeyboardEvent) => {
-        this.dispatchEvent(new CustomEvent('noteOff', {detail: {noteNumber: this.dict[e.key]}} ))
+        if (typeof this.pressed[e.key] !== 'undefined') {
+            this.dispatchEvent(new CustomEvent('noteOff', {detail: {noteNumber: this.dict[e.key]}} ))
+            this.pressed[e.key] = false;
+        }
     }
 }
