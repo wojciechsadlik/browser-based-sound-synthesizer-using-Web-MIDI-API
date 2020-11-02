@@ -43,19 +43,23 @@ export default class Oscilloscope {
         this.frequency = frequency;
     }
 
-    public drawLoop = () => {
-        let drawFrame = requestAnimationFrame(this.drawLoop);
+    public drawStart = () => {
         let now = Date.now();
-        let elapsed = now - this.then;
+        let interval = this.fpsInterval * 1000.0 / this.frequency;
+        let expected = now + interval;
 
-        let timeout = this.fpsInterval * 1000.0 / this.frequency;
+        setTimeout(this.drawLoop, interval, interval, expected);
+    }
 
-        if (elapsed >= timeout) {
-            this.drawPlot();
-            //console.log(`${elapsed} => ${elapsed - timeout}`);
+    private drawLoop = (interval: number, expected: number) => {
+        let now = Date.now();
+        let error = now - expected;
 
-            this.then = now - elapsed % timeout;
-        }
+        expected += interval;
+
+        setTimeout(this.drawLoop, interval - error, interval, expected);
+
+        this.drawPlot();
     }
 
     private drawPlot = () => {

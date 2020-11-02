@@ -17,7 +17,7 @@ const oscilloscope = new Oscilloscope(audioContext, oscillatorCanvasElem);
 
 soundGenerator.setDestination(oscilloscope.analyser);
 oscilloscope.setDestination();
-oscilloscope.drawLoop();
+oscilloscope.drawStart();
 
 const midiCommunicator = new MIDI_Communicator();
 midiCommunicator.init(midiInputSelectElem);
