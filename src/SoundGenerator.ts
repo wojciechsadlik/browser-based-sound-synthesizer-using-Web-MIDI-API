@@ -77,32 +77,32 @@ export default class SoundGenerator {
         if (typeof this.waveforms.get(waveformId) !== 'undefined')
             this.waveforms.get(waveformId)!.volume = value;
         else
-            throw new Error('waveform doesn\'t exist');
+            throw new Error(`waveform ${waveformId} doesn\'t exist`);
     }
 
     public setDelay = (waveformId: number, value: number): void | never => {
         if (typeof this.waveforms.get(waveformId) !== 'undefined')
             this.waveforms.get(waveformId)!.delay = value;
         else
-            throw new Error('waveform doesn\'t exist');
+            throw new Error(`waveform ${waveformId} doesn\'t exist`);
     }
 
     public setWaveType = (waveformId: number, waveType: OscillatorType): void | never => {
         if (typeof this.waveforms.get(waveformId) !== 'undefined')
             this.waveforms.get(waveformId)!.type = waveType;
         else
-            throw new Error('waveform doesn\'t exist');
+            throw new Error(`waveform ${waveformId} doesn\'t exist`);
     }
 
     public addWaveform = (id: number, waveform: WaveformData): void => {
         this.waveforms.set(id, waveform);
     }
 
-    public removeWaveform = (id: number): void | never => {
-        if (typeof this.waveforms.get(id) !== 'undefined')
-            this.waveforms.delete(id);
+    public removeWaveform = (waveformId: number): void | never => {
+        if (typeof this.waveforms.get(waveformId) !== 'undefined')
+            this.waveforms.delete(waveformId);
         else
-            throw new Error('waveform doesn\'t exist');
+            throw new Error(`waveform ${waveformId} doesn\'t exist`);
     }
 
     static readonly noteNumberToFrequency = (noteNumber: number): number => {

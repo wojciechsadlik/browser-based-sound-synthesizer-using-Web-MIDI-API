@@ -1,5 +1,3 @@
-import SoundGenerator from './SoundGenerator';
-
 export default class MIDI_Communicator {
     private midiAccess: WebMidi.MIDIAccess | null;
     private midiInputSelectElem: HTMLSelectElement | null;

@@ -16,7 +16,7 @@ export default class Oscilloscope {
         if (canvas.getContext('2d'))
             this.canvasCtx = canvas.getContext('2d')!;
         else
-            throw new Error('Can\'t get canvas context');
+            throw new Error('Get canvas context error');
         
         this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
