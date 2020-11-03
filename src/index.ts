@@ -22,21 +22,13 @@ oscilloscope.drawStart();
 const midiCommunicator = new MIDI_Communicator();
 midiCommunicator.init(midiInputSelectElem);
 
-midiCommunicator.eventTarget.addEventListener('noteOn', ((e: CustomEvent) => {
-    soundGenerator.noteOn(e.detail.noteNumber);
-}) as EventListener);
+midiCommunicator.eventTarget.addEventListener('noteOn', noteOn as EventListener);
 
-midiCommunicator.eventTarget.addEventListener('noteOff', ((e: CustomEvent) => {
-    soundGenerator.noteOff(e.detail.noteNumber);
-}) as EventListener);
+midiCommunicator.eventTarget.addEventListener('noteOff', noteOff as EventListener);
 
 const keyboardMidiInput = new KeyboardMIDIInput();
-keyboardMidiInput.addEventListener('noteOn', ((e: CustomEvent) => {
-    soundGenerator.noteOn(e.detail.noteNumber);
-}) as EventListener);
-keyboardMidiInput.addEventListener('noteOff', ((e: CustomEvent) => {
-    soundGenerator.noteOff(e.detail.noteNumber);
-}) as EventListener);
+keyboardMidiInput.addEventListener('noteOn', noteOn as EventListener);
+keyboardMidiInput.addEventListener('noteOff', noteOff as EventListener);
 
 window.addEventListener('click', resumeAudioContext);
 
@@ -47,6 +39,15 @@ addWaveformBtnElem.addEventListener('click', addWaveform);
 masterVolumeElem.addEventListener('change', volumeChange);
 
 compressorCheckElem.addEventListener('change', compressorCheckChange);
+
+function noteOn(e: CustomEvent) {
+    soundGenerator.noteOn(e.detail.noteNumber);
+    oscilloscope.setFrequency(SoundGenerator.noteNumberToFrequency(e.detail.noteNumber));
+}
+
+function noteOff(e: CustomEvent) {
+    soundGenerator.noteOff(e.detail.noteNumber);
+}
 
 function inputSelectChange() {
     midiCommunicator.setSelectedInput(midiInputSelectElem.value);

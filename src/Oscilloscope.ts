@@ -3,9 +3,7 @@ export default class Oscilloscope {
     private dataArray: Uint8Array;
     private canvasCtx: CanvasRenderingContext2D;
     private canvas: HTMLCanvasElement;
-    private then: number;
     private frequency: number;
-    private fpsInterval: number;
 
     constructor(audioCtx: AudioContext, canvas: HTMLCanvasElement) {
         this.analyser = audioCtx.createAnalyser();
@@ -22,9 +20,7 @@ export default class Oscilloscope {
         
         this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.then = Date.now();
         this.frequency = 220;
-        this.fpsInterval = 1000.0 / 30.0;
     }
 
     public setDestination = (destination?: AudioNode) => {
@@ -44,29 +40,8 @@ export default class Oscilloscope {
     }
 
     public drawStart = () => {
-        //let now = Date.now();
-        //let interval = this.fpsInterval * 1000.0 / this.frequency;
-        //let interval = 1000 / this.frequency;
-        //let expected = now + interval;
-
-        //setTimeout(this.drawLoop, interval, interval, expected);
-
-        //this.drawPlot();
-        //requestAnimationFrame(this.drawStart);
-        setInterval(this.drawPlot, this.fpsInterval);
-    }
-
-    private drawLoop = (interval: number, expected: number) => {
-        let now = Date.now();
-        let error = now - expected;
-        console.log(`${interval}, ${error}`);
-
-        expected += interval;
-
-        setTimeout(this.drawLoop, interval - error, interval, expected);
-
-        if (error < 1.0)
-            this.drawPlot();
+        this.drawPlot();
+        requestAnimationFrame(this.drawStart);
     }
 
     private drawPlot = () => {
@@ -98,11 +73,8 @@ export default class Oscilloscope {
             } else {
                 this.canvasCtx.lineTo(x, y);
             }
-
-            //x += sliceWidth;
         }
 
-        //this.canvasCtx.lineTo(this.canvas.width, this.canvas.height / 2);
         this.canvasCtx.stroke();
     }
 }
