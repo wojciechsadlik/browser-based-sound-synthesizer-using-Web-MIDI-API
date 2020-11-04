@@ -4,6 +4,7 @@ export default class Oscilloscope {
     private canvasCtx: CanvasRenderingContext2D;
     private canvas: HTMLCanvasElement;
     private frequency: number;
+    private animFrameId: number | null;
 
     constructor(audioCtx: AudioContext, canvas: HTMLCanvasElement) {
         this.analyser = audioCtx.createAnalyser();
@@ -21,6 +22,8 @@ export default class Oscilloscope {
         this.canvasCtx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.frequency = 220;
+
+        this.animFrameId = null;
     }
 
     public setDestination = (destination?: AudioNode) => {
@@ -39,9 +42,16 @@ export default class Oscilloscope {
         this.frequency = frequency;
     }
 
+    public drawStop = () => {
+        if (this.animFrameId) {
+            cancelAnimationFrame(this.animFrameId);
+            this.animFrameId = null;
+        }
+    }
+
     public drawStart = () => {
         this.drawPlot();
-        requestAnimationFrame(this.drawStart);
+        this.animFrameId = requestAnimationFrame(this.drawStart);
     }
 
     private drawPlot = () => {
@@ -64,7 +74,7 @@ export default class Oscilloscope {
         let offset = sampleTime % a;
 
         for (let i = 0; i < bufferLength; i++) {
-            let x = (i + offset) * sliceWidth;
+            let x = this.canvas.width - ((i + offset) * sliceWidth);
             let v = this.dataArray[i] / 128.0;
             let y = v * this.canvas.height / 2;
 

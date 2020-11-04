@@ -9,15 +9,12 @@ const addWaveformBtnElem = document.getElementById('add_waveform_btn') as HTMLBu
 const waveformsTableElem = document.getElementById('waveforms') as HTMLTableElement;
 const masterVolumeElem = document.getElementById('masterVolume') as HTMLInputElement;
 const compressorCheckElem = document.getElementById('compressorToggle') as HTMLInputElement;
+const oscillatorCheckElem = document.getElementById('oscillatorToggle') as HTMLInputElement;
 const oscillatorCanvasElem = document.getElementById('oscillatorCanvas') as HTMLCanvasElement;
 
 const audioContext = new window.AudioContext();
 const soundGenerator = new SoundGenerator(audioContext);
 const oscilloscope = new Oscilloscope(audioContext, oscillatorCanvasElem);
-
-soundGenerator.setDestination(oscilloscope.analyser);
-oscilloscope.setDestination();
-oscilloscope.drawStart();
 
 const midiCommunicator = new MIDI_Communicator();
 midiCommunicator.init(midiInputSelectElem);
@@ -40,6 +37,8 @@ masterVolumeElem.addEventListener('change', volumeChange);
 
 compressorCheckElem.addEventListener('change', compressorCheckChange);
 
+oscillatorCheckElem.addEventListener('change', oscillatorCheckChange);
+
 function noteOn(e: CustomEvent) {
     soundGenerator.noteOn(e.detail.noteNumber);
     oscilloscope.setFrequency(SoundGenerator.noteNumberToFrequency(e.detail.noteNumber));
@@ -47,6 +46,28 @@ function noteOn(e: CustomEvent) {
 
 function noteOff(e: CustomEvent) {
     soundGenerator.noteOff(e.detail.noteNumber);
+}
+
+function oscillatorCheckChange(this: HTMLInputElement) {
+    if (this.checked) {
+        oscilloscopeStart();
+    } else {
+        oscilloscopeStop();
+    }
+}
+
+function oscilloscopeStop() {
+    oscilloscope.drawStop();
+    oscilloscope.disconnect();
+    soundGenerator.setDestination(audioContext.destination);
+    oscillatorCanvasElem.hidden = true;
+}
+
+function oscilloscopeStart() {
+    soundGenerator.setDestination(oscilloscope.analyser);
+    oscilloscope.setDestination();
+    oscilloscope.drawStart();
+    oscillatorCanvasElem.hidden = false;
 }
 
 function inputSelectChange() {
