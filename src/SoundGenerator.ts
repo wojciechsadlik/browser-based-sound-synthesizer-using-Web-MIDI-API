@@ -48,7 +48,6 @@ export default class SoundGenerator {
     }
     
     public noteOn = (noteNumber: number, velocity: number): void => {
-        console.log(velocity);
         let voices = this.generateVoices(SoundGenerator.noteNumberToFrequency(noteNumber), velocity);
         
         for (let voice of voices) {
@@ -117,7 +116,6 @@ export default class SoundGenerator {
             if (waveformData.type) {
                 let voice = new Voice(this.context, waveformData.type, this.masterGain);
                 voice.setVolume(waveformData.volume * velocity);
-                console.log(waveformData.volume * velocity)
                 voice.setDelay(waveformData.delay, frequency);
                 voice.frequency.value = frequency;
                 voices.push(voice);
