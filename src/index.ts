@@ -40,7 +40,7 @@ compressorCheckElem.addEventListener('change', compressorCheckChange);
 oscillatorCheckElem.addEventListener('change', oscillatorCheckChange);
 
 function noteOn(e: CustomEvent) {
-    soundGenerator.noteOn(e.detail.noteNumber);
+    soundGenerator.noteOn(e.detail.noteNumber, e.detail.velocity / 125);
     oscilloscope.setFrequency(SoundGenerator.noteNumberToFrequency(e.detail.noteNumber));
 }
 

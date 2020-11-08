@@ -31,7 +31,7 @@ export default class KeyboardMIDIInput extends EventTarget {
     private keyDown = (e: KeyboardEvent) => {
         if (typeof this.pressed[e.key] !== 'undefined') {
             if (!this.pressed[e.key]) {
-                this.dispatchEvent(new CustomEvent('noteOn', {detail: {noteNumber: this.dict[e.key]}} ))
+                this.dispatchEvent(new CustomEvent('noteOn', { detail: { noteNumber: this.dict[e.key], velocity: 125 } }))
                 this.pressed[e.key] = true;
             }
         }
@@ -39,7 +39,7 @@ export default class KeyboardMIDIInput extends EventTarget {
 
     private keyUp = (e: KeyboardEvent) => {
         if (typeof this.pressed[e.key] !== 'undefined') {
-            this.dispatchEvent(new CustomEvent('noteOff', {detail: {noteNumber: this.dict[e.key]}} ))
+            this.dispatchEvent(new CustomEvent('noteOff', { detail: { noteNumber: this.dict[e.key] } }))
             this.pressed[e.key] = false;
         }
     }

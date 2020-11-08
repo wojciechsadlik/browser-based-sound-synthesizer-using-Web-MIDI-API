@@ -57,7 +57,7 @@ export default class MIDI_Communicator {
         switch (e.data[0] & 0xf0) {
             case 0x90:
                 if (e.data[2] !== 0) {
-                    this.eventTarget.dispatchEvent(new CustomEvent('noteOn', { detail: {noteNumber: e.data[1]} } as EventInit));
+                    this.eventTarget.dispatchEvent(new CustomEvent('noteOn', { detail: {noteNumber: e.data[1], velocity: e.data[2]} } as EventInit));
                 }
                 break;
             case 0x80:
