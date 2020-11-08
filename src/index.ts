@@ -7,6 +7,7 @@ import WaveformData from './WaveformData';
 const midiInputSelectElem = document.getElementById('MIDI_Input_sel') as HTMLSelectElement;
 const addWaveformBtnElem = document.getElementById('add_waveform_btn') as HTMLButtonElement;
 const waveformsTableElem = document.getElementById('waveforms') as HTMLTableElement;
+const dynamicKeyboardCheckElem = document.getElementById('dynamicKeyboardToggle') as HTMLInputElement;
 const masterVolumeElem = document.getElementById('masterVolume') as HTMLInputElement;
 const compressorCheckElem = document.getElementById('compressorToggle') as HTMLInputElement;
 const oscillatorCheckElem = document.getElementById('oscillatorToggle') as HTMLInputElement;
@@ -40,7 +41,11 @@ compressorCheckElem.addEventListener('change', compressorCheckChange);
 oscillatorCheckElem.addEventListener('change', oscillatorCheckChange);
 
 function noteOn(e: CustomEvent) {
-    soundGenerator.noteOn(e.detail.noteNumber, e.detail.velocity / 125);
+    let velocity = 1;
+    if (dynamicKeyboardCheckElem.checked)
+        velocity = e.detail.velocity / 125;
+    
+    soundGenerator.noteOn(e.detail.noteNumber, velocity);
     oscilloscope.setFrequency(SoundGenerator.noteNumberToFrequency(e.detail.noteNumber));
 }
 
