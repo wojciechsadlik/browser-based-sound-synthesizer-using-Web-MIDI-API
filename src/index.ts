@@ -7,14 +7,15 @@ import WaveformData from './WaveformData';
 const midiInputSelectElem = document.getElementById('MIDI_Input_sel') as HTMLSelectElement;
 const addWaveformBtnElem = document.getElementById('add_waveform_btn') as HTMLButtonElement;
 const waveformsTableElem = document.getElementById('waveforms') as HTMLTableElement;
+const dynamicKeyboardCheckElem = document.getElementById('dynamicKeyboardToggle') as HTMLInputElement;
 const masterVolumeElem = document.getElementById('masterVolume') as HTMLInputElement;
 const compressorCheckElem = document.getElementById('compressorToggle') as HTMLInputElement;
-const oscillatorCheckElem = document.getElementById('oscillatorToggle') as HTMLInputElement;
-const oscillatorCanvasElem = document.getElementById('oscillatorCanvas') as HTMLCanvasElement;
+const oscilloscopeCheckElem = document.getElementById('oscilloscopeToggle') as HTMLInputElement;
+const oscilloscopeCanvasElem = document.getElementById('oscilloscopeCanvas') as HTMLCanvasElement;
 
 const audioContext = new window.AudioContext();
 const soundGenerator = new SoundGenerator(audioContext);
-const oscilloscope = new Oscilloscope(audioContext, oscillatorCanvasElem);
+const oscilloscope = new Oscilloscope(audioContext, oscilloscopeCanvasElem);
 
 const midiCommunicator = new MIDI_Communicator();
 midiCommunicator.init(midiInputSelectElem);
@@ -37,10 +38,14 @@ masterVolumeElem.addEventListener('change', volumeChange);
 
 compressorCheckElem.addEventListener('change', compressorCheckChange);
 
-oscillatorCheckElem.addEventListener('change', oscillatorCheckChange);
+oscilloscopeCheckElem.addEventListener('change', oscillatorCheckChange);
 
 function noteOn(e: CustomEvent) {
-    soundGenerator.noteOn(e.detail.noteNumber);
+    let velocity = 1;
+    if (dynamicKeyboardCheckElem.checked)
+        velocity = e.detail.velocity / 125;
+    
+    soundGenerator.noteOn(e.detail.noteNumber, velocity);
     oscilloscope.setFrequency(SoundGenerator.noteNumberToFrequency(e.detail.noteNumber));
 }
 
@@ -60,14 +65,14 @@ function oscilloscopeStop() {
     oscilloscope.drawStop();
     oscilloscope.disconnect();
     soundGenerator.setDestination(audioContext.destination);
-    oscillatorCanvasElem.hidden = true;
+    oscilloscopeCanvasElem.hidden = true;
 }
 
 function oscilloscopeStart() {
     soundGenerator.setDestination(oscilloscope.analyser);
     oscilloscope.setDestination();
     oscilloscope.drawStart();
-    oscillatorCanvasElem.hidden = false;
+    oscilloscopeCanvasElem.hidden = false;
 }
 
 function inputSelectChange() {

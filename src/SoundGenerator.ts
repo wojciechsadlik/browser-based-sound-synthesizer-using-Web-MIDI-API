@@ -47,8 +47,8 @@ export default class SoundGenerator {
         }
     }
     
-    public noteOn = (noteNumber: number): void => {
-        let voices = this.generateVoices(SoundGenerator.noteNumberToFrequency(noteNumber));
+    public noteOn = (noteNumber: number, velocity: number): void => {
+        let voices = this.generateVoices(SoundGenerator.noteNumberToFrequency(noteNumber), velocity);
         
         for (let voice of voices) {
             voice.start();
@@ -109,13 +109,13 @@ export default class SoundGenerator {
         return 440 * Math.pow(2, (noteNumber - 69) / 12);
     }
 
-    private generateVoices = (frequency: number): Voice[] => {
+    private generateVoices = (frequency: number, velocity: number): Voice[] => {
         let voices: Voice[] = [];
         
         this.waveforms.forEach((waveformData) => {
             if (waveformData.type) {
                 let voice = new Voice(this.context, waveformData.type, this.masterGain);
-                voice.setVolume(waveformData.volume);
+                voice.setVolume(waveformData.volume * velocity);
                 voice.setDelay(waveformData.delay, frequency);
                 voice.frequency.value = frequency;
                 voices.push(voice);
