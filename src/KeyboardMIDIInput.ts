@@ -7,7 +7,9 @@ export default class KeyboardMIDIInput extends EventTarget {
         't': 64,
         'y': 65,
         'u': 67,
-        'i': 69
+        'i': 69,
+        'o': 71,
+        'p': 72
     }
 
     private pressed: {[id:string]: boolean} = {
@@ -18,7 +20,9 @@ export default class KeyboardMIDIInput extends EventTarget {
         't': false,
         'y': false,
         'u': false,
-        'i': false
+        'i': false,
+        'o': false,
+        'p': false
     }
 
     constructor() {
