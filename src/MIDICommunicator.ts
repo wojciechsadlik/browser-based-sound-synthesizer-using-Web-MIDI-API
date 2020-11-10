@@ -1,14 +1,14 @@
-export default class MIDI_Communicator {
+export default class MIDICommunicator extends EventTarget {
     private midiAccess: WebMidi.MIDIAccess | null;
     private midiInputSelectElem: HTMLSelectElement | null;
     private activeInput: WebMidi.MIDIInput | null;
-    readonly eventTarget: EventTarget; 
 
     constructor() {
+        super();
+
         this.midiAccess = null;
         this.midiInputSelectElem = null;
         this.activeInput = null;
-        this.eventTarget = new EventTarget();
     }
 
     public async init(midiInputSelectElem: HTMLSelectElement) {
@@ -57,11 +57,11 @@ export default class MIDI_Communicator {
         switch (e.data[0] & 0xf0) {
             case 0x90:
                 if (e.data[2] !== 0) {
-                    this.eventTarget.dispatchEvent(new CustomEvent('noteOn', { detail: {noteNumber: e.data[1], velocity: e.data[2]} } as EventInit));
+                    this.dispatchEvent(new CustomEvent('noteOn', { detail: {noteNumber: e.data[1], velocity: e.data[2]} } as EventInit));
                 }
                 break;
             case 0x80:
-                this.eventTarget.dispatchEvent(new CustomEvent('noteOff', { detail: {noteNumber: e.data[1]} } as EventInit));
+                this.dispatchEvent(new CustomEvent('noteOff', { detail: {noteNumber: e.data[1]} } as EventInit));
         }
     }
 

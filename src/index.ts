@@ -1,4 +1,4 @@
-import MIDI_Communicator from './MIDI_Communicator';
+import MIDICommunicator from './MIDICommunicator';
 import KeyboardMIDIInput from './KeyboardMIDIInput';
 import SoundGenerator from './SoundGenerator';
 import Oscilloscope from './Oscilloscope';
@@ -17,12 +17,12 @@ const audioContext = new window.AudioContext();
 const soundGenerator = new SoundGenerator(audioContext);
 const oscilloscope = new Oscilloscope(audioContext, oscilloscopeCanvasElem);
 
-const midiCommunicator = new MIDI_Communicator();
+const midiCommunicator = new MIDICommunicator();
 midiCommunicator.init(midiInputSelectElem);
 
-midiCommunicator.eventTarget.addEventListener('noteOn', noteOn as EventListener);
+midiCommunicator.addEventListener('noteOn', noteOn as EventListener);
 
-midiCommunicator.eventTarget.addEventListener('noteOff', noteOff as EventListener);
+midiCommunicator.addEventListener('noteOff', noteOff as EventListener);
 
 const keyboardMidiInput = new KeyboardMIDIInput();
 keyboardMidiInput.addEventListener('noteOn', noteOn as EventListener);
