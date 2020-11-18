@@ -8,10 +8,10 @@ import WaveformData from './WaveformData';
 const midiInputSelectElem = document.getElementById('MIDI_Input_sel') as HTMLSelectElement;
 const addWaveformBtnElem = document.getElementById('add_waveform_btn') as HTMLButtonElement;
 const waveformsTableElem = document.getElementById('waveforms') as HTMLTableElement;
-const dynamicKeyboardCheckElem = document.getElementById('dynamicKeyboardToggle') as HTMLInputElement;
+const dynamicKeyboardCheckElem = document.getElementById('dynamicKeyboardCheckbox') as HTMLInputElement;
 const masterVolumeElem = document.getElementById('masterVolume') as HTMLInputElement;
-const compressorCheckElem = document.getElementById('compressorToggle') as HTMLInputElement;
-const oscilloscopeCheckElem = document.getElementById('oscilloscopeToggle') as HTMLInputElement;
+const compressorCheckElem = document.getElementById('compressorCheckbox') as HTMLInputElement;
+const oscilloscopeCheckElem = document.getElementById('oscilloscopeCheckbox') as HTMLInputElement;
 const oscilloscopeCanvasElem = document.getElementById('oscilloscopeCanvas') as HTMLCanvasElement;
 
 const audioContext = new window.AudioContext();
