@@ -1,3 +1,5 @@
+import {NoteOnEvent, NoteOffEvent} from './CustomEvents';
+
 export default class MIDICommunicator extends EventTarget {
     private midiAccess: WebMidi.MIDIAccess | null;
     private midiInputSelectElem: HTMLSelectElement | null;
@@ -57,11 +59,11 @@ export default class MIDICommunicator extends EventTarget {
         switch (e.data[0] & 0xf0) {
             case 0x90:
                 if (e.data[2] !== 0) {
-                    this.dispatchEvent(new CustomEvent('noteOn', { detail: {noteNumber: e.data[1], velocity: e.data[2]} } as EventInit));
+                    this.dispatchEvent(new NoteOnEvent(e.data[1], e.data[2]));
                 }
                 break;
             case 0x80:
-                this.dispatchEvent(new CustomEvent('noteOff', { detail: {noteNumber: e.data[1]} } as EventInit));
+                this.dispatchEvent(new NoteOffEvent(e.data[1], e.data[2]));
         }
     }
 
