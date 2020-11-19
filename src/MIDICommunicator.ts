@@ -13,7 +13,7 @@ export default class MIDICommunicator extends EventTarget {
         this.activeInput = null;
     }
 
-    public async init(midiInputSelectElem: HTMLSelectElement) {
+    public init = async (midiInputSelectElem: HTMLSelectElement) => {
         try {
             this.midiAccess = await navigator.requestMIDIAccess();
             console.log('MIDI access gained');
@@ -70,9 +70,7 @@ export default class MIDICommunicator extends EventTarget {
     private onstatechange = (e: WebMidi.MIDIConnectionEvent): void => {
         let midiPort = e.port;
         if (midiPort.type === 'input') {
-            if (midiPort.connection === 'open') {
-                this.updateInputSelect();
-            } else if (midiPort.connection == 'closed') {
+            if (midiPort.connection === 'closed') {
                 if (this.activeInput && e.port.id === this.activeInput.id) {
                     this.setActiveInput(null);
                 }
