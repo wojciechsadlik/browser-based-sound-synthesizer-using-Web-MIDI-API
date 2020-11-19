@@ -70,7 +70,7 @@ export default class MIDICommunicator extends EventTarget {
     private onstatechange = (e: WebMidi.MIDIConnectionEvent): void => {
         let midiPort = e.port;
         if (midiPort.type === 'input') {
-            if (midiPort.connection === 'closed') {
+            if (midiPort.state === 'disconnected') {
                 if (this.activeInput && e.port.id === this.activeInput.id) {
                     this.setActiveInput(null);
                 }
