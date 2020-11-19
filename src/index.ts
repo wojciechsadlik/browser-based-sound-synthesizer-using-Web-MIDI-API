@@ -1,3 +1,4 @@
+import {NoteOnEvent, NoteOffEvent} from './CustomEvents';
 import MIDICommunicator from './MIDICommunicator';
 import KeyboardMIDIInput from './KeyboardMIDIInput';
 import SoundGenerator from './SoundGenerator';
@@ -7,10 +8,10 @@ import WaveformData from './WaveformData';
 const midiInputSelectElem = document.getElementById('MIDI_Input_sel') as HTMLSelectElement;
 const addWaveformBtnElem = document.getElementById('add_waveform_btn') as HTMLButtonElement;
 const waveformsTableElem = document.getElementById('waveforms') as HTMLTableElement;
-const dynamicKeyboardCheckElem = document.getElementById('dynamicKeyboardToggle') as HTMLInputElement;
+const dynamicKeyboardCheckElem = document.getElementById('dynamicKeyboardCheckbox') as HTMLInputElement;
 const masterVolumeElem = document.getElementById('masterVolume') as HTMLInputElement;
-const compressorCheckElem = document.getElementById('compressorToggle') as HTMLInputElement;
-const oscilloscopeCheckElem = document.getElementById('oscilloscopeToggle') as HTMLInputElement;
+const compressorCheckElem = document.getElementById('compressorCheckbox') as HTMLInputElement;
+const oscilloscopeCheckElem = document.getElementById('oscilloscopeCheckbox') as HTMLInputElement;
 const oscilloscopeCanvasElem = document.getElementById('oscilloscopeCanvas') as HTMLCanvasElement;
 
 const audioContext = new window.AudioContext();
@@ -40,17 +41,17 @@ compressorCheckElem.addEventListener('change', compressorCheckChange);
 
 oscilloscopeCheckElem.addEventListener('change', oscillatorCheckChange);
 
-function noteOn(e: CustomEvent) {
+function noteOn(e: NoteOnEvent) {
     let velocity = 1;
     if (dynamicKeyboardCheckElem.checked)
-        velocity = e.detail.velocity / 125;
+        velocity = e.velocity / 125;
     
-    soundGenerator.noteOn(e.detail.noteNumber, velocity);
-    oscilloscope.setFrequency(SoundGenerator.noteNumberToFrequency(e.detail.noteNumber));
+    soundGenerator.noteOn(e.noteNumber, velocity);
+    oscilloscope.setFrequency(SoundGenerator.noteNumberToFrequency(e.noteNumber));
 }
 
-function noteOff(e: CustomEvent) {
-    soundGenerator.noteOff(e.detail.noteNumber);
+function noteOff(e: NoteOffEvent) {
+    soundGenerator.noteOff(e.noteNumber);
 }
 
 function oscillatorCheckChange(this: HTMLInputElement) {

@@ -35,7 +35,7 @@ export default class SoundGenerator {
         this.outputNode.connect(destination);
     }
 
-    public setCompressorOn(turnOn: boolean) {
+    public setCompressorOn = (turnOn: boolean) => {
         this.compressor.disconnect();
         this.masterGain.disconnect();
 
