@@ -20,6 +20,7 @@ export default class SoundGenerator {
         this.destination = context.destination;
 
         this.compressor = this.context.createDynamicsCompressor();
+        this.compressor.threshold.value = -32;
         this.compressor.connect(this.destination);
         this.outputNode = this.compressor;
         
