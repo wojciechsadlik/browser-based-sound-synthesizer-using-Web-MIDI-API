@@ -8,4 +8,6 @@ Main features:
 - synthesizing created waves to speaker output
 - oscilloscope visualization
 
+![Interface image](interface.png)
+
 Project made for Engineering thesis in Computer Science on Wroclaw University of Science and Technology.
